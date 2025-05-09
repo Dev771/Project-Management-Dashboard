@@ -32,7 +32,7 @@ const ProjectItem = memo(({ project, isAdmin, onEdit, onDelete }) => {
     const navigate = useNavigate();
   
     return (
-        <div className="flex items-center p-4 hover:bg-gray-50 dark:hover:bg-gray-750 border-b dark:border-gray-700" onClick={() => {
+        <div className="flex items-center p-4 hover:bg-gray-500 dark:hover:bg-gray-750 border-b dark:border-gray-700 cursor-pointer" onClick={() => {
             navigate(`/project/${project.project_id}`);
         }}>
             <div className="flex-1">
