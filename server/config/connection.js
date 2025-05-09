@@ -19,7 +19,7 @@ connection.connect((err) => {
     console.log('Connected to MySQL database!');
 });
 
-const db = connection.promise();
+export const db = connection.promise();
 
 export async function runQuery(sql, params = []) {
     try {

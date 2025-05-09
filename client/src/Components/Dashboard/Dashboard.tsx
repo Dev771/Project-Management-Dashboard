@@ -215,7 +215,7 @@ const Dashboard = () => {
                   isLoading={nonAdminLoading}
                   loadMore={loadMoreNonAdminProjects}
                   isAdmin={false}
-                  onEdit={handleOpenAddModal.bind(null, true)}
+                  onEdit={null}
                   onDelete={null}
                   emptyMessage={nonAdminLoading ? "Loading projects..." : "No projects found where you are a member or manager."}
                 />

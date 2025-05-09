@@ -57,19 +57,27 @@ const ProjectItem = memo(({ project, isAdmin, onEdit, onDelete }) => {
             </div>
 
             <div className="ml-4 flex items-center space-x-2">
-                <button 
-                onClick={() => onEdit(project)} 
-                className="p-2 text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-gray-600 rounded-md"
-                >
-                <Edit className="h-4 w-4" />
-                </button>
-                {isAdmin && (
-                <button 
-                    onClick={() => onDelete(project.project_id)} 
-                    className="p-2 text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-gray-600 rounded-md"
-                >
+              {isAdmin && (
+                <>
+                  <button 
+                    onClick={(e) => { 
+                      e.stopPropagation();
+                      onEdit(project)
+                    }} 
+                    className="p-2 text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-gray-600 rounded-md"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </button>
+                  <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(project.project_id)
+                      }} 
+                      className="p-2 text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-gray-600 rounded-md"
+                  >
                     <Trash2 className="h-4 w-4" />
-                </button>
+                  </button>
+                </>
                 )}
             </div>
         </div>

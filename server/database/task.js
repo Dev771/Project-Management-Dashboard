@@ -159,6 +159,21 @@ const getTaskDetails = async (projectId, taskId) => {
     return data.length ? data[0] : null;
 }
 
+const deleteAllTask = async (taskIds) => {
+    await runQuery(`
+        DELETE FROM task_comments WHERE task_id IN (?)
+    `, [taskIds])
+
+    await runQuery(`
+        DELETE FROM task WHERE id IN (?)
+    `, [taskIds]);
+
+    return {
+        status: 200,
+        message: "All Tasks Deleted!!!"
+    }
+}
+
 export default {
     getAllTasks,
     CreateNewTask,
@@ -166,5 +181,6 @@ export default {
     updateTask,
     getAllComments,
     addComment,
-    getTaskDetails
+    getTaskDetails,
+    deleteAllTask
 }

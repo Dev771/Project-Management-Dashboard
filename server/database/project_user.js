@@ -92,10 +92,22 @@ const updateCandidateRole = async ({ project_id, candidateId, role }) => {
     }
 }
 
+const deleteAllUserLinks = async (projectId) => {
+    await runQuery(`
+        DELETE FROM project_users where project_id = ?
+    `, [projectId]);
+
+    return {
+        status: 200,
+        message: "All Members From the Project Removed!!!"
+    }
+}
+
 export default {
     getAllProjectUsers,
     getUserDetails,
     addCandidateToProject,
     removeCandidateFromProject,
-    updateCandidateRole
+    updateCandidateRole,
+    deleteAllUserLinks
 }

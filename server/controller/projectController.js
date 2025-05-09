@@ -57,3 +57,38 @@ export const getProjectDetails = async (req, res) => {
         return res.status(400).json({ message: "Error While Fetching the Data!!!" });
     }
 }
+
+export const deleteProject = async (req, res) => {
+    const { userId } = req;
+    const { project_id } = req.params;
+
+    if(!project_id || !userId) {
+        return res.status(400).json("Invalid Credentials Provided!!!");
+    }
+
+    const response = await projectHandler.deleteProject(project_id, userId);
+
+    return res.status(response.status).json(response);
+}
+
+export const updateProject = async (req, res) => {
+    const { project_id } = req.params;
+    const { name, description } = req.body;
+    const { userId } = req;
+
+    if(!project_id || !userId) {
+        return res.status().json({
+            status: 400,
+            message: "Invalid Credentials!!"
+        });
+    }
+
+    const response = await projectHandler.updateProject({
+        project_id,
+        name,
+        description,
+        userId
+    })
+
+    return res.status(response.status).json(response);
+}

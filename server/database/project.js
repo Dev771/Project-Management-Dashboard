@@ -117,9 +117,34 @@ const GetProjectDetailsBasedOnUserAndProjectId = async ({ project_id, user_id })
     return data.length ? data[0] : null;
 }
 
+const deleteProject = async (projectId) => {
+    await runQuery(`
+        DELETE FROM projects where id = ?
+    `, [projectId]);
+
+    return {
+        status: 200,
+        message: "Project Deleted Successfully!!!"
+    }
+}
+
+const updateProject = async ({ project_id, name, description }) => {
+    await runQuery(`
+        UPDATE projects
+            SET name = ?, description = ?
+        WHERE id = ?
+    `, [name, description, project_id]);
+
+    return {
+        message: "success"
+    }
+}
+
 export default {
     CreateNewProject,
     GetAllUserProjects,
     GetProjectFromId,
-    GetProjectDetailsBasedOnUserAndProjectId
+    GetProjectDetailsBasedOnUserAndProjectId,
+    deleteProject,
+    updateProject
 }
