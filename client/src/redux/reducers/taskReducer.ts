@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { Actions, TaskState } from "../../interface/types";
 import {
     UPDATE_TASK,
     UPDATE_TASK_LIST,
@@ -12,7 +14,7 @@ const initialState = {
     }
 };
   
-const taskReducer = (state = initialState, action) => {
+const taskReducer = (state: TaskState = initialState, action:Actions) => {
     const { payload } = action;
   
     switch (action.type) {
@@ -21,7 +23,7 @@ const taskReducer = (state = initialState, action) => {
                 ...state,
                 tasks: ((payload) => {
                     const obj: Record<string, any> = {};
-                    payload.map((a) => {
+                    payload.map((a: any) => {
                         obj[a.id] = a;
                     });
                     return obj;

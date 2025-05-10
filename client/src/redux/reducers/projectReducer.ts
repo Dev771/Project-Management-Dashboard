@@ -1,3 +1,4 @@
+import type { Actions, ProjectState } from "../../interface/types";
 import {
     CLOSE_PROJECT,
     UPDATE_PROJECT,
@@ -10,7 +11,7 @@ const initialState = {
     users: null
 };
   
-const projectReducer = (state = initialState, action) => {
+const projectReducer = (state: ProjectState = initialState, action: Actions) => {
     const { payload } = action;
   
     switch (action.type) {

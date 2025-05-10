@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef } from "react"
 import WebSocketManager from "../services/WebSocketManager";
 import { useNavigate } from "react-router-dom";
@@ -5,16 +6,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateProject } from "../redux/actions/projectActions";
 import mainInstance from "../services/networkAdapters/mainAxiosInstance";
 import { updateTask, updateTaskList } from "../redux/actions/taskActions";
-import { type Users, type Comments, type Tasks } from "../interface/types";
+import { type Users, type Comments, type Tasks, type RootState } from "../interface/types";
 
 const useSocketConnection = ({ projectId }: { projectId: string | undefined }) => {
     const socket = useRef<any>(null);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const { user } = useSelector((state) => state.user);
-    const { users: userList } = useSelector((state) => state.project);
-    const { tasks } = useSelector((state) => state.task);
+    const { user } = useSelector((state: RootState) => state.user);
+    const { users: userList } = useSelector((state: RootState) => state.project);
+    const { tasks } = useSelector((state: RootState) => state.task);
 
     const userListRef = useRef<Users[]>(userList);
     const tasksRef = useRef(tasks);
@@ -38,7 +39,7 @@ const useSocketConnection = ({ projectId }: { projectId: string | undefined }) =
         socket.current.on("userLeft", (data: { userId: string }) => {
             const newUserList = Array.isArray(userListRef.current) ? userListRef.current.filter((currentUser) => {
                 return currentUser.userId !== data.userId
-            }) : null;
+            }) : undefined;
             dispatch(updateProject({ users: newUserList }));
         })
 

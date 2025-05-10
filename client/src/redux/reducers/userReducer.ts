@@ -1,16 +1,17 @@
+import type { Actions, UserState } from "../../interface/types";
 import {
     LOGIN,
     LOGOUT,
     UPDATE_USER_DETAILS,
 } from "../CONSTANTS";
   
-const initialState = {
+const initialState: UserState = {
     loading: false,
     user: null,
     token: null,
 };
   
-const userReducer = (state = initialState, action) => {
+const userReducer = (state: UserState = initialState, action: Actions): UserState => {
     const { payload } = action;
   
     switch (action.type) {
