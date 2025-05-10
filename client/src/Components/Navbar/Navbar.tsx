@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../redux/actions/userActions";
 import { Avatar } from "@mui/material";
+import { closeProject } from "../../redux/actions/projectActions";
 
 const Navbar = () => {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -22,7 +23,10 @@ const Navbar = () => {
       <nav className="bg-white dark:bg-gray-800 shadow-md dark:text-gray-200">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16">
-                <div className="flex items-center cursor-pointer" onClick={() => navigate("/")}>
+                <div className="flex items-center cursor-pointer" onClick={() => {
+                    dispatch(closeProject());
+                    navigate("/");
+                }}>
                     <span className="text-xl font-bold">Project Management Hub</span>
                 </div>
                 
