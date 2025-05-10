@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LogOut, Search, User } from "lucide-react"
+import { LogOut } from "lucide-react"
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../redux/actions/userActions";

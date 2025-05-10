@@ -4,16 +4,17 @@ import VirtualizedProjectList from './VirtualizedProjectList';
 import mainInstance from '../../services/networkAdapters/mainAxiosInstance';
 import { debounce } from 'lodash';
 import { useProjectsData } from '../../utils/useProjectsData';
+import type { Projects } from '../../interface/types';
 
 const Dashboard = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [currentProject, setCurrentProject] = useState(null);
+  const [currentProject, setCurrentProject] = useState<Projects | null>(null);
   const [adminExpanded, setAdminExpanded] = useState(true);
   const [memberExpanded, setMemberExpanded] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   
-  const [newProject, setNewProject] = useState({
+  const [newProject, setNewProject] = useState<Projects>({
     name: '',
     description: ''
   });
@@ -39,20 +40,20 @@ const Dashboard = () => {
   } = useProjectsData(false); 
 
   const debouncedSearch = useMemo(
-    () => debounce((term) => {
+    () => debounce((term: string) => {
       updateAdminFilters({ searchTerm: term });
       updateNonAdminFilters({ searchTerm: term });
     }, 300),
     [updateAdminFilters, updateNonAdminFilters]
   );
   
-  const handleSearchChange = (e) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
     setSearchTerm(term);
     debouncedSearch(term);
   };
   
-  const handleOpenAddModal = useCallback((edit = false, project = null) => {
+  const handleOpenAddModal = useCallback((edit = false, project: Projects | null = null) => {
     if (edit && project) {
       setIsEditMode(true);
       setCurrentProject(project);
@@ -78,7 +79,7 @@ const Dashboard = () => {
     });
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setNewProject({
       ...newProject,
@@ -113,7 +114,7 @@ const Dashboard = () => {
     }
   };
 
-  const handleDeleteProject = async (projectId) => {
+  const handleDeleteProject = async (projectId: string) => {
     if (window.confirm("Are you sure you want to delete this project?")) {
       try {
         await mainInstance.delete(`/projects/${projectId}`);

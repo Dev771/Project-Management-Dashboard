@@ -7,6 +7,7 @@ const getAllTasks = async (projectId, searchTerm = "") => {
             t.title,
             t.status,
             t.priority,
+            t.description,
             u.id AS assigned_to,
             u.name AS assigned_to_name,
             u.email AS assigned_to_email,
@@ -37,13 +38,14 @@ const getAllTasks = async (projectId, searchTerm = "") => {
 };
 
 const CreateNewTask = async (taskDetails) => {
-    const data = await runQuery("Insert into tasks (title, assigned_to, status, project_id, due_date, priority) values (?, ?, ?, ?, ?, ?)", [
+    const data = await runQuery("Insert into tasks (title, assigned_to, status, project_id, due_date, priority, description) values (?, ?, ?, ?, ?, ?, ?)", [
         taskDetails.title,
         taskDetails.assignedTo,
         taskDetails.status,
         taskDetails.project_id,
         taskDetails.due_date,
-        taskDetails.priority
+        taskDetails.priority,
+        taskDetails.description
     ]);
 
     return data.insertId;
@@ -73,6 +75,11 @@ const updateTask = async (projectId, taskId, updateData) => {
     if (updateData.dueDate !== undefined) {
         fields.push(`due_date = ?`);
         values.push(updateData.dueDate);
+    }
+
+    if (updateData.description !== undefined) {
+        fields.push(`description = ?`);
+        values.push(updateData.description);
     }
 
     if (updateData.priority !== undefined) {
@@ -144,6 +151,7 @@ const getTaskDetails = async (projectId, taskId) => {
             t.title as title,
             t.status as status,
             t.priority as priority,
+            t.description,
             u.id as assigned_to,
             u.name as assigned_to_name,
             u.email as assigned_to_email,

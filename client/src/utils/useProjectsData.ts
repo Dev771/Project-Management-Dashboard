@@ -1,16 +1,17 @@
 // Custom hook for data fetching with pagination and filtering
 import { useState, useEffect, useCallback } from 'react';
 import mainInstance from '../services/networkAdapters/mainAxiosInstance';
+import type { Projects } from '../interface/types';
 
 // This hook now handles two role groups:
 // 1. isAdmin=true - Projects where the user is an admin
 // 2. isAdmin=false - Projects where the user is a member or manager (non-admin roles)
 export const useProjectsData = (isAdmin = true) => {
-    const [projects, setProjects] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
+    const [projects, setProjects] = useState<Projects[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+    const [page, setPage] = useState<number>(1);
+    const [hasMore, setHasMore] = useState<boolean>(true);
     const [filters, setFilters] = useState({
         searchTerm: '',
         roleGroup: isAdmin ? 'admin' : 'non-admin', // 'admin' or 'non-admin'
@@ -34,8 +35,8 @@ export const useProjectsData = (isAdmin = true) => {
             
             // Build query parameters
             const params = new URLSearchParams({
-                page: resetPagination ? 1 : page,
-                pageSize: PAGE_SIZE,
+                page: (resetPagination ? 1 : page).toString(),
+                pageSize: PAGE_SIZE.toString(),
                 roleGroup: filters.roleGroup
             });
             

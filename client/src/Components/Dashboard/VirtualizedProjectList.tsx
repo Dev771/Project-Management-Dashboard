@@ -3,8 +3,27 @@ import { FixedSizeList as List } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
 import { Edit, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import type { Projects } from '../../interface/types';
 
-const ProjectItem = memo(({ project, isAdmin, onEdit, onDelete }) => {
+interface ProjectItem {
+  project: Projects,
+  isAdmin: boolean,
+  onEdit: (project: Projects) => void
+  onDelete: (projectId: string | undefined) => void
+}
+
+interface VirtualizedProjectList {
+  projects: Projects[]; 
+  hasMore: boolean; 
+  isLoading: boolean;
+  loadMore: boolean;
+  isAdmin: boolean;
+  onEdit: (project: Projects) => void;
+  onDelete: (projectId: string | undefined) => void;
+  emptyMessage: string
+}
+
+const ProjectItem = memo(({ project, isAdmin, onEdit, onDelete } : ProjectItem) => {
     const getRoleBadge = () => {
         const role = project.role || (isAdmin ? 'admin' : 'member');
         
@@ -93,10 +112,10 @@ const VirtualizedProjectList = ({
   onEdit,
   onDelete,
   emptyMessage = "No projects found."
-}) => {
+}: VirtualizedProjectList) => {
   const itemCount = hasMore ? projects.length + 1 : projects.length;
   const loadMoreItems = loadMore;
-  const isItemLoaded = index => !hasMore || index < projects.length;
+  const isItemLoaded = (index: number) => !hasMore || index < projects.length;
   
   if (projects.length === 0 && !isLoading && !hasMore) {
     return (
@@ -106,7 +125,7 @@ const VirtualizedProjectList = ({
     );
   }
 
-  const Row = ({ index, style }) => {
+  const Row = ({ index, style }: { index: number, style: any }) => {
     if (!isItemLoaded(index)) {
       return (
         <div style={style} className="p-4 text-center">

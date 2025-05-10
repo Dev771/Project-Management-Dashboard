@@ -15,14 +15,14 @@ export const getAllTasks = async (req, res) => {
 
 export const addTask = async (req, res) => {
     const { projectId } = req.params;
-    const { title, assignedTo, status, dueDate, priority } = req.body;
+    const { title, assignedTo, status, dueDate, priority, description } = req.body;
     const { userId } = req;
 
     if(!projectId) {
         return res.status(400).json({ error: 'Project ID is required' });
     }
 
-    const response = await taskHandler.addTask({ projectId, title, assignedTo, status, userId, dueDate, priority });
+    const response = await taskHandler.addTask({ projectId, title, assignedTo, status, userId, dueDate, priority, description });
     
     res.status(response.status).json(response);
 }

@@ -9,9 +9,10 @@ import TaskDetailsDrawer from '../TaskDetailsDrawer/TaskDetailsDrawer';
 import moment from 'moment';
 import { updateTask, updateTaskList } from '../../redux/actions/taskActions';
 import useSocketConnection from '../../utils/useSocketConnection';
-import { Avatar, AvatarGroup, debounce, Tooltip } from '@mui/material';
+import { Avatar, AvatarGroup, debounce} from '@mui/material';
+import { type Tasks, type Comments, type Users as UserInterface } from '../../interface/types';
 
-const getPriorityColor = (priority) => {
+const getPriorityColor = (priority: string) => {
   switch (priority) {
     case 'HIGH':
       return 'bg-red-100 text-red-800';
@@ -24,7 +25,7 @@ const getPriorityColor = (priority) => {
   }
 };
 
-const getStatusColor = (status) => {
+const getStatusColor = (status: string) => {
   switch (status) {
     case 'done':
       return 'bg-green-100 text-green-800';
@@ -37,7 +38,7 @@ const getStatusColor = (status) => {
   }
 };
 
-const getRoleColor = (role) => {
+const getRoleColor = (role: string) => {
   switch (role) {
     case 'admin':
       return 'bg-red-100 text-red-800';
@@ -51,30 +52,31 @@ const getRoleColor = (role) => {
 };
 
 const ProjectDetails = () => {
-    const [tabValue, setTabValue] = useState(0);
-    const [loading, setLoading] = useState(true);
-    const [openTaskDialog, setOpenTaskDialog] = useState(false);
-    const [openCandidateDialog, setOpenCandidateDialog] = useState(false);
-    const [isTaskUpdate, setIsTaskUpdate] = useState(false);
-    const [isCandidateUpdating, setIsCandidateUpdating] = useState(false);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [taskFormData, setTaskFormData] = useState({
+    const [tabValue, setTabValue] = useState<number>(0);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [openTaskDialog, setOpenTaskDialog] = useState<boolean>(false);
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [openCandidateDialog, setOpenCandidateDialog] = useState<boolean>(false);
+    const [isTaskUpdate, setIsTaskUpdate] = useState<boolean>(false);
+    const [isCandidateUpdating, setIsCandidateUpdating] = useState<boolean>(false);
+    const [taskFormData, setTaskFormData] = useState<Tasks>({
         title: '',
+        description: "",
         assignedTo: '',
         status: 'todo',
         priority: 'Medium',
         dueDate: Date.now()
     });
     const [users, setUsers] = useState([]);
-    const [loadingUsers, setLoadingUsers] = useState(false);
-    const [candidateFormData, setCandidateFormData] = useState({
+    const [loadingUsers, setLoadingUsers] = useState<boolean>(false);
+    const [candidateFormData, setCandidateFormData] = useState<UserInterface>({
         userId: '',
         role: 'member'
     });
 
-    const [taskDrawerOpen, setTaskDrawerOpen] = useState(false);
-    const [selectedTaskId, setSelectedTaskId] = useState(null);
-    const [tasks, setTasks] = useState([]);
+    const [taskDrawerOpen, setTaskDrawerOpen] = useState<boolean>(false);
+    const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+    const [tasks, setTasks] = useState<Tasks[]>([]);
 
     const { project, members, users: usersList } = useSelector((state) => state.project);
     const { user } = useSelector((state) => state.user);
@@ -92,7 +94,7 @@ const ProjectDetails = () => {
     } = useSocketConnection({ projectId: id });
 
     useEffect(() => {
-        setTasks((prev) => Object.keys(taskList).length > 0 ? Object.values(taskList) : []);
+        setTasks(() => Object.keys(taskList).length > 0 ? Object.values(taskList) : []);
     }, [taskList]);
 
     useEffect(() => {
@@ -114,7 +116,7 @@ const ProjectDetails = () => {
         navigate("/");
     }
 
-    const handleTabChange = (newValue) => {
+    const handleTabChange = (newValue: number) => {
         setTabValue(newValue);
     };
 
@@ -122,13 +124,13 @@ const ProjectDetails = () => {
         setOpenTaskDialog(true);
     };
 
-    const fetchTaskComments = async (taskId) => {
+    const fetchTaskComments = async (taskId: string) => {
         const response = await mainInstance.get(`/tasks/${id}/comments/${taskId}`)
         const commentList = response.data.data;
 
         dispatch(updateTask({
             ...taskList[taskId],
-            comments: commentList.map((comment) => {
+            comments: commentList.map((comment: Comments) => {
                 return {
                     id: comment.id,
                     author: comment.name,
@@ -141,7 +143,7 @@ const ProjectDetails = () => {
         }))
     }
 
-    const handleToggleTaskDrawerOpen = (taskId) => {
+    const handleToggleTaskDrawerOpen = (taskId: string) => {
         setSelectedTaskId(taskId);
         setTaskDrawerOpen(true);
         if(taskList[taskId] && (taskList[taskId].comments === undefined || taskList[taskId].comments.length === 0)) {
@@ -159,10 +161,11 @@ const ProjectDetails = () => {
         setIsTaskUpdate(false);
         setTaskFormData({
             title: '',
+            description: "",
             assignedTo: '',
             status: 'todo',
             priority: 'Medium',
-            dueDate: Date.now()
+            dueDate: Date.now(),
         });
     };
 
@@ -180,7 +183,7 @@ const ProjectDetails = () => {
         });
     };
 
-    const handleTaskFormChange = (e) => {
+    const handleTaskFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setTaskFormData(prev => ({
             ...prev,
@@ -188,7 +191,7 @@ const ProjectDetails = () => {
         }));
     };
 
-    const handleCandidateFormChange = (e) => {
+    const handleCandidateFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setCandidateFormData(prev => ({
             ...prev,
@@ -215,6 +218,7 @@ const ProjectDetails = () => {
         } finally {
             setTaskFormData({
                 title: '',
+                description: "",
                 assignedTo: '',
                 status: 'todo',
                 priority: 'Medium',
@@ -277,7 +281,7 @@ const ProjectDetails = () => {
     const handleDeleteMember = async (candidateId: string) => {
         try {
             await mainInstance.delete(`/users/${id}/candidates/${candidateId}`);
-            const updatedMembers = members.filter((member) => member.id !== candidateId);
+            const updatedMembers = members.filter((member: UserInterface) => member.id !== candidateId);
             dispatch(updateProject({ members: updatedMembers }));
 
             socket.emit("candidateRemoved", { candidateId }, () => {
@@ -288,7 +292,7 @@ const ProjectDetails = () => {
         }
     }
 
-    const handleToggleEditMemberRoles = (candidate) => {
+    const handleToggleEditMemberRoles = (candidate: UserInterface) => {
         setIsCandidateUpdating(true);
         setCandidateFormData({
             userId: candidate.id,
@@ -299,7 +303,7 @@ const ProjectDetails = () => {
         handleCandidateDialogOpen();
     }
 
-    const handleDeleteTask = (event, taskId) => {
+    const handleDeleteTask = (event: React.ChangeEvent<HTMLInputElement>, taskId: string) => {
         event.stopPropagation();
 
         if (window.confirm("Are you sure you want to delete this task?")) {
@@ -319,7 +323,7 @@ const ProjectDetails = () => {
         }
     }
 
-    const handleAddComment = async (taskId, comment) => {
+    const handleAddComment = async (taskId: string, comment: Comments) => {
         try {
             const response = await mainInstance.post(`/tasks/${id}/comments`, {
                 taskId,
@@ -357,7 +361,7 @@ const ProjectDetails = () => {
         }
     }
 
-    const handleUpdateTask = (taskId) => {
+    const handleUpdateTask = (taskId: string) => {
         mainInstance.put(`/tasks/${id}/${taskId}`, taskFormData)
             .then((response) => {
                 if (response.status === 200) {
@@ -383,7 +387,7 @@ const ProjectDetails = () => {
             });
     }
 
-    const handleEditTask = (event, taskId) => {
+    const handleEditTask = (event: React.ChangeEvent<HTMLInputElement>, taskId: string) => {
         event.stopPropagation();
 
         const taskToEdit = tasks.find((task) => task.id === taskId);
@@ -393,6 +397,7 @@ const ProjectDetails = () => {
             setIsTaskUpdate(true);
             setTaskFormData({
                 id: taskToEdit.id,
+                description: taskToEdit.description,
                 title: taskToEdit.title,
                 assignedTo: taskToEdit.assigned_to,
                 status: taskToEdit.status,
@@ -402,11 +407,11 @@ const ProjectDetails = () => {
         }
     }
 
-    const canEditTask = (userRole) => {
+    const canEditTask = (userRole: string) => {
         return ['admin', 'manager'].includes(userRole);
     };
 
-    const canDeleteTask = (userRole) => {
+    const canDeleteTask = (userRole: string) => {
         return ['admin', 'manager'].includes(userRole);
     };
 
@@ -422,7 +427,7 @@ const ProjectDetails = () => {
 
             dispatch(updateProject({ project: projectDetails, members: membersData }));
             dispatch(updateTaskList(taskData));
-        } catch(err) {
+        } catch(err: unknown) {
             if(err.message === "Project not found") {
                 alert("Project not found");
                 navigate("/")
@@ -578,30 +583,39 @@ const ProjectDetails = () => {
                             <div className="bg-white rounded-lg shadow overflow-hidden">
                                 <ul className="divide-y divide-gray-100">
                                     {tasks.map((task) => (
-                                        <li key={task.id} className="py-3 px-4 flex justify-between items-center cursor-pointer" onClick={() => handleToggleTaskDrawerOpen(task.id)}>
+                                        <li key={task.id} className="py-3 px-4 flex flex-col cursor-pointer" onClick={() => handleToggleTaskDrawerOpen(task.id)}>
+                                            <div className="flex justify-between items-center">
                                             <div>
-                                            <p className="font-medium text-gray-900">{task.title}</p>
-                                            <p className="text-sm text-gray-500 mt-1">
-                                                Assigned to: {task.assigned_to_name} | { task.assigned_to_email } | { moment(task.due_date).format("MMM Do YYYY | HH:MM") }
-                                            </p>
+                                                <p className="font-medium text-gray-900">{task.title}</p>
+                                                <p className="text-sm text-gray-500 mt-1">
+                                                Assigned to: {task.assigned_to_name} | {task.assigned_to_email} | {moment(task.due_date).format("MMM Do YYYY | HH:MM")}
+                                                </p>
                                             </div>
                                             <div className="flex items-center space-x-2">
-                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(task.status)}`}>
+                                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(task.status || "")}`}>
                                                 {task.status}
-                                            </span>
-                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(task.priority)}`}>
+                                                </span>
+                                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(task.priority || "")}`}>
                                                 {task.priority}
-                                            </span>
-                                            {canEditTask(project.userRole) && (
-                                                <button className="p-1 text-gray-500 hover:text-blue-600" onClick={(e) => handleEditTask(e, task.id)}>
+                                                </span>
+                                                {canEditTask(project.userRole) && (
+                                                <button className="p-1 text-gray-500 hover:text-blue-600" onClick={(e: React.ChangeEvent<HTMLInputElement>) => handleEditTask(e, task.id)}>
                                                     <Edit size={18} />
                                                 </button>
-                                            )}
-                                            {canDeleteTask(project.userRole) && (
-                                                <button className="p-1 text-gray-500 hover:text-red-600" onClick={(e) => handleDeleteTask(e, task.id)}>
+                                                )}
+                                                {canDeleteTask(project.userRole) && (
+                                                <button className="p-1 text-gray-500 hover:text-red-600" onClick={(e: React.ChangeEvent<HTMLInputElement>) => handleDeleteTask(e, task.id)}>
                                                     <Trash2 size={18} />
                                                 </button>
-                                            )}
+                                                )}
+                                            </div>
+                                            </div>
+                                            
+                                            {/* Task Description Section */}
+                                            <div className="mt-2 pl-1">
+                                            <p className="text-sm text-gray-700">
+                                                {task.description ? task.description : "No description provided"}
+                                            </p>
                                             </div>
                                         </li>
                                     ))}
@@ -630,14 +644,14 @@ const ProjectDetails = () => {
                             
                             <div className="bg-white rounded-lg shadow overflow-hidden">
                             <ul className="divide-y divide-gray-100">
-                                {members.map((member) => (
+                                {members.map((member: UserInterface) => (
                                 <li key={member.id} className="py-3 px-4 flex justify-between items-center">
                                     <div>
                                     <p className="font-medium text-gray-900">{member.name}</p>
                                     <p className="text-sm text-gray-500 mt-1">{member.email}</p>
                                     </div>
                                     <div className="flex items-center space-x-2">
-                                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(member.role)}`}>
+                                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(member.role || "")}`}>
                                         {member.role}
                                     </span>
                                     { member.id !== user.id && (
@@ -645,7 +659,7 @@ const ProjectDetails = () => {
                                             <button className="p-1 text-gray-500 hover:text-blue-600" onClick={() => handleToggleEditMemberRoles(member)}>
                                                 <Edit size={18} />
                                             </button>
-                                            <button className="p-1 text-gray-500 hover:text-red-600" onClick={() => handleDeleteMember(member.id)}>
+                                            <button className="p-1 text-gray-500 hover:text-red-600" onClick={() => handleDeleteMember(member.id || "")}>
                                                 <Trash2 size={18} />
                                             </button>
                                         </>
@@ -686,6 +700,20 @@ const ProjectDetails = () => {
 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Description
+                                    </label>
+                                    <textarea
+                                        name="description"
+                                        value={taskFormData.description}
+                                        onChange={handleTaskFormChange}
+                                        rows={3}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                        placeholder="Enter task details..."
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
                                         Assigned To
                                     </label>
                                     <select
@@ -696,7 +724,7 @@ const ProjectDetails = () => {
                                         required
                                     >
                                         <option value="">Select team member</option>
-                                        {members.map((member) => (
+                                        {members.map((member: UserInterface) => (
                                             <option key={member.id} value={member.id}>
                                                 {member.name}
                                             </option>
@@ -765,7 +793,7 @@ const ProjectDetails = () => {
                                             ? 'bg-blue-400 cursor-not-allowed'
                                             : 'bg-blue-600 hover:bg-blue-700'
                                     }`}
-                                    disabled={!taskFormData.title || !taskFormData.assignedTo || !taskFormData.dueDate}
+                                    disabled={!taskFormData.title || !taskFormData.assignedTo || !taskFormData.dueDate || !taskFormData.description}
                                 >
                                     {isTaskUpdate ? "Update Task" : "Add Task"}
                                 </button>

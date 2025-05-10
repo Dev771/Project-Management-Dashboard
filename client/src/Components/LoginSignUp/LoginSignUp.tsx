@@ -39,7 +39,7 @@ const LoginPage = () => {
     navigate(isLogin ? '/signup' : '/login');
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -51,7 +51,7 @@ const LoginPage = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -81,7 +81,7 @@ const LoginPage = () => {
       localStorage.setItem("token", response.data.data.token);
     
       navigate("/");
-    } catch (err) {
+    } catch (err: unknown) {
         if (err.response && err.response.data && err.response.data.message) {
             setError(err.response.data.message);
         } else if (err.message) {

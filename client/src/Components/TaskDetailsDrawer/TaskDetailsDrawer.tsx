@@ -1,10 +1,10 @@
 // src/components/TaskDetailsDrawer.jsx
-import { Chip } from '@mui/material';
 import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import type { Tasks } from '../../interface/types';
 
-const getStatusColor = (status) => {
+const getStatusColor = (status: string) => {
   switch (status) {
     case 'done':
       return 'bg-green-100 text-green-800';
@@ -17,7 +17,7 @@ const getStatusColor = (status) => {
   }
 };
 
-const getPriorityColor = (priority) => {
+const getPriorityColor = (priority: string) => {
   switch (priority) {
     case 'HIGH':
       return 'bg-red-100 text-red-800';
@@ -30,14 +30,24 @@ const getPriorityColor = (priority) => {
   }
 };
 
-const TaskDetailsDrawer = ({ isOpen, onClose, taskId, onAddComment }) => {
-  const [task, setTask] = useState({});
+interface TaskDetailsDrawer {
+  isOpen: boolean;
+  onClose: () => void;
+  taskId: string;
+  onAddComment: (taskId: string, comment: string | null) => void;
+}
+
+const TaskDetailsDrawer = ({ isOpen, onClose, taskId, onAddComment }: TaskDetailsDrawer) => {
+  const [task, setTask] = useState<Tasks>({
+    title: "",
+    description: ""
+  });
   const [comment, setComment] = useState<string | null>(null);
   const taskObj = useSelector((state) => state.task.tasks);
 
   const { user } = useSelector((state) => state.user);
 
-  const handleAddComment = (e) => {
+  const handleAddComment = (e : React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
 
     onAddComment(taskId, comment);

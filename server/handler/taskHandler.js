@@ -35,7 +35,7 @@ const getAllTasks = async (projectId, searchTerm) => {
     }
 }
 
-const addTask = async ({ projectId, title, assignedTo, status, userId, dueDate, priority }) => {
+const addTask = async ({ projectId, title, assignedTo, status, userId, dueDate, priority, description }) => {
     try {
         const projectDetails = await project.GetProjectFromId(projectId);
 
@@ -68,7 +68,8 @@ const addTask = async ({ projectId, title, assignedTo, status, userId, dueDate, 
             status,
             project_id: projectId,
             due_date: dueDate,
-            priority: priority ? priority.toUpperCase() : "LOW"
+            priority: priority ? priority.toUpperCase() : "LOW",
+            description
         }
 
         const savedTask = await task.CreateNewTask(taskData);
