@@ -1,4 +1,4 @@
 export const config = {
-    "apiUrl": "http://localhost:3000/api",
-    "socketUrl": "ws://localhost:3000"
+    "apiUrl": "https://project-management-dashboard-yj77.onrender.com",
+    "socketUrl": "wss://project-management-dashboard-yj77.onrender.com"
 }
